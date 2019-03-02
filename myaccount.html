@@ -1,0 +1,474 @@
+@extends('admin_views.layout.website_layout')
+@section('content')
+ 
+<div class="container nonpad">
+<section id="wrapper">
+   <div class="laberBreadcrumb" style="margin-bottom:0px;">
+      <div class="container">
+         <nav data-depth="5" class="breadcrumb hidden-sm-down">
+            <ol itemscope itemtype="">
+               <li itemprop="itemListElement" itemscope itemtype="">
+                  <a itemprop="item" href="{{URL::to('/')}}">
+                  <span itemprop="name">Home</span>
+                  </a>
+               </li>
+               <li itemprop="itemListElement" itemscope itemtype="">
+                  <a itemprop="item" s>
+                  <span itemprop="name">My Account</span>
+                  </a>
+               </li>
+            </ol>
+         </nav>
+      </div>
+   </div>
+   <aside id="notifications">
+      <div class="container">
+      </div>
+   </aside>
+   <div class="container padd_both">
+      <div class="row">
+         <div id="content-wrapper">
+            <br/><br/><br/>
+            <section id="main">
+               <div class="cart-grid row nonpad">
+                  <div class="cart-grid-right col-xs-12 col-lg-4 nonpad">
+                     <div class="card cart-summary">
+                        <div class="cart-detailed-totals">
+                           <div class="card-block myaccount">
+                              <center>
+                                 <div class="widht01">
+                                     @if(!empty($contact['profile_pic']))
+                                      <img  src="{{URL::asset('public/uploadimages/'.$contact['profile_pic'])}}" 
+                                      class="myaccountimage"/>
+                                     @else
+                                     <img  src="{{ asset('websiteassets/img/2_large.jpg') }}" class="myaccountimage"/>
+                                    @endif
+                                    <form enctype="multipart/form-data" id="upload_form3" role="form" 
+                                          method="POST" action="" >
+                                    <div class="imagew">
+                                       <label><i class="fa fa-pencil-square-o editicon" aria-hidden="true" title="Change Image"></i>
+                                       <input type="file" name="profile_pic" style="display: none;">
+                                       </label>
+                                    </div>
+                                   </form>
+                                 </div>
+                                 <div class="myaccountemal">
+                                  @if(!empty($contact['full_name'])) {{$contact['full_name']}} @endif</div>
+                                 <div class="myaccountmobile">
+                                  @if(!empty($contact['email_mobile'])) {{$contact['email_mobile']}} @endif
+                                 </div>
+                              </center>
+                           </div>
+                           <hr>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="cart-grid-body col-xs-12 col-lg-8 nonpad">
+                     <!-- cart products detailed -->
+                     <div class="card cart-container">
+                        <div class="cart-overview js-cart">
+                           <section id="checkout">
+                              <button class="options">
+                              <i class="fa fa-caret-down"></i>My Order
+                              </button>
+                              <div id="cart" class="">
+                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pasd">
+                                    <div class="cart-overview js-cart">
+								
+                                   
+									   	
+									 @foreach($order as $key=>$value)
+                                              @foreach($value['user_order_product'] as $key1=>$value1)
+                                              @if(!empty($value1['product'][0]['product_image'][0]['image']))
+											<div class="select_item col-lg-6 col-md-6 col-sm-6 col-xs-12 box_new" >
+                                          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" style="padding:0px 5px 0px 5px;">
+                                             <center><img  src="{{URL::asset('public/uploadimages/'.$value1['product'][0]['product_image'][0]['image'])}}" /></center>
+                                          </div>
+                                          <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+                                               <h1 class="laber-product-title "><div class="linetext1">{{$value1['product'][0]['product_name']}}</div></h1>
+                                                 <div class=" color333">Ordered on 
+                                                  <?php 
+                                                  $timestamp = strtotime($value['date']);
+                                                  $newDate = date('d F Y', $timestamp); 
+                                                 ?>{{$newDate}}</div>
+                                          </div>
+                                          <div class="clearfix"></div>
+										   </div>
+										   @endif
+                                            @endforeach
+                                          @endforeach
+                                      
+									   
+                                       
+                                       <!--<span class="no-items">There are no more items in your cart</span>-->
+                                    </div>
+                                 </div>
+                              </div>
+                              <button class="options">
+                              <i class="fa fa-caret-down"></i>2. My Wishlist
+                              </button>
+                              <form class="form1"  id="delivery">
+                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pasd">
+                       
+                                    <div class="cart-overview js-cart">
+									  @if(isset($wishlist))  
+                                           @foreach($wishlist as $key=>$value)
+
+                                    <div class="select_item col-lg-6 col-md-6 col-sm-6 col-xs-12 box_new" ">
+                                          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" style="padding:0px 5px 0px 5px;">
+                                                 <center>
+                                                  @if(!empty($value['product_specification']['product_image'][0]['is_checked']=="yes"))
+                                                <a href="{{URL::to('view_product/'.$value['product_specification']['id'])}}" >  <img src="{{URL::asset('public/uploadimages/'.$value['product_specification']['product_image'][0]['image'])}}" class="smalld_image"> </a>
+                                                  @endif
+                                                </center>
+                                              </div>
+                                              <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+											   <a href="{{URL::to('view_product/'.$value['product_specification']['id'])}}" >
+                                               <h1 class="laber-product-title ">
+											   <div class="linetext1">{{$value['product_specification']['product_name']}}<//div></h1>
+                                                </a>
+												Price: {{$value['product_specification']['amount']}}
+                                            </div> <br>
+											
+                                         
+                                         
+                                          </div>
+									   
+                                   
+                                  @endforeach
+                                          @endif
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                 </div>
+                              </form>
+                              <button class="options">
+                              <i class="fa fa-caret-down"></i>3. My Address
+                              </button>
+                              <div class="form1"  id="delivery">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pasd">
+                                       <form enctype="multipart/form-data" id="upload_form2" role="form" 
+                                          method="POST" action="" >
+                                          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="name"  type="text" value="@if(!empty($address['name'])) {{$address['name']}} @endif" placeholder="Full Name" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="mobile_no"  type="text" 
+                                                   value="@if(!empty($address['mobile_no'])) {{$address['mobile_no']}} @endif"
+                                                    placeholder="Mobile No" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="address_line1"  type="text" 
+                                                       value="@if(!empty($address['address_line1'])) {{$address['address_line1']}} @endif"
+                                                     placeholder="Address Line1" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="address_line2"  type="text" 
+                                                      value="@if(!empty($address['address_line2'])) {{$address['address_line2']}} @endif"
+                                                     placeholder="Address Line2" required>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="email"  type="text" 
+                                                      value="@if(!empty($address['email'])) {{$address['email']}} @endif"
+                                                    placeholder="Email" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="city"  type="text" 
+                                                    value="@if(!empty($address['city'])) {{$address['city']}} @endif"
+                                                   placeholder="City" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="state"  type="text" 
+                                                   value="@if(!empty($address['state'])) {{$address['state']}} @endif"
+                                                     placeholder="State" required>
+                                                </div>
+                                             </div>
+                                             <div class="form-group">
+                                                <div class="">
+                                                   <input class="form-control passs" name="alternate_no"  type="text" 
+                                                     value="@if(!empty($address['alternate_no'])) {{$address['alternate_no']}} @endif"
+                                                    placeholder="Alternate No" required>
+                                                </div>
+                                             </div>
+                                          </div>
+                                           <input  name="address_id"  type="hidden" value="@if(!empty($address['id'])) {{$address['id']}} @endif">
+                                       </form>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                       <div class="checkout text-xs-center card-block">
+                                         <p id="address_success" style="color: #c454e6;font-size: 12px;
+                                                text-align: center;" ></p>
+                                            
+                                          <button class="btn btn-primary " type="submit" id="delivery_address" style="margin: 0;"> Save</button>
+                                          
+                                       </div>
+                                    </div>
+                                   
+                                 </div>
+                              <button class="options">
+                              <i class="fa fa-caret-down"></i>4. Change Password
+                              </button>
+      
+                                 <form  class="form1" enctype="multipart/form-data" id="upload_form1"
+                                  role="form" method="POST" action="" >
+                                 <div class="cart-overview js-cart">
+								  
+                                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pasd">
+								   
+                                       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+									  
+                                          <div class="form-group">
+                                             <div class="">
+                                                <input class="form-control passs" name="old_password" id="old_password" type="text" value="" placeholder="Old Password" required>
+                                             </div>
+                                          </div>
+                                         
+                                        
+                                       </div>
+                                       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
+                                          <div class="form-group">
+                                             <div class="">
+                                                <input class="form-control passs" name="new_password" id="new_password" type="text" value=""  placeholder="New Password" required>
+                                             </div>
+                                          </div>
+                                          
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+                      							<div class="checkout text-xs-center card-block" >
+                                       <p id="change_password_success" style="color: #c454e6;font-size: 12px;
+                                                text-align: center;" ></p>
+                      									<button class="btn btn-primary " type="submit"  id="change_password" style="margin: 0;"> Save</button>
+                      								</div>
+                                                           
+                                    </div>
+                                 
+                                    
+                                 </div>
+                              </form>
+                           </section>
+                           <!--<span class="no-items">There are no more items in your cart</span>-->
+                           <div class="clearfix"></div>
+                           <div class="clearfix"></div>
+                        </div>
+                     </div>
+                     <!-- shipping informations -->
+                  </div>
+               </div>
+            </section>
+         </div>
+      </div>
+   </div>
+</section>
+
+<script>
+   const opt = document.getElementsByClassName("options")
+   toggleMenu(opt[0])
+   
+   for (let i = 0; i < opt.length; i++) {
+     opt[i].onclick = function() {
+       toggleMenu(this)
+       for (let node of opt) {
+         if (node !== this)
+           closeMenus(node)
+       }
+     }
+   }
+   
+   function toggleMenu(that) {
+     that.classList.toggle("active")
+     let form = that.nextElementSibling
+     if (form.style.maxHeight) {
+       form.style.maxHeight = null
+       toggleConfirmIcon(that)
+     }
+     else
+       form.style.maxHeight = `${form.scrollHeight}px`
+   }
+   
+   function closeMenus(that) {
+     that.classList.remove("active")
+     let form = that.nextElementSibling
+     if (form.style.maxHeight) {
+       form.style.maxHeight = null
+       toggleConfirmIcon(that)
+     }
+   }
+   
+   function toggleConfirmIcon(that) {
+     let form = that.nextElementSibling
+     form.setAttribute("data-completed", setFormCompletion(that))
+     if (form.getAttribute("id") === 'summary') { // if form complete and not #summary OR if all forms complete and #summary
+       let total = 0
+       for (let node of opt) {
+         let f = node.nextElementSibling
+         if (f.id !== 'summary' && f.getAttribute('data-completed'))
+           total++
+       }
+       if (total === opt.length)
+         
+       setConfirmIconClass(that)
+     } else {
+       setConfirmIconClass(that)
+     }
+   }
+   
+   function setConfirmIconClass(that) {
+     let confirmIcon = that.children[1]
+     if (that.getAttribute("data-completed") === 'true') {
+       confirmIcon.classList.remove("fa-times-circle")
+       confirmIcon.classList.add("fa", "fa-check-circle")
+     } else {
+       confirmIcon.classList.remove("fa-check-circle")
+       confirmIcon.classList.add("fa", "fa-times-circle")
+     }
+   }
+ 
+   function setFormCompletion(that) {
+     let form = that.nextElementSibling
+     inputNodes = form.getElementsByTagName('input')
+     let completedFields = 0,
+         totalFields = inputNodes.length
+     for (let i = 0; i < totalFields; i++) {
+       if (inputNodes[i]['type'] !== "checkbox")  {
+         if (inputNodes[i]['type'] === "radio" && inputNodes[i].checked)
+           return true
+         else if (inputNodes[i].value && inputNodes[i]['type'] !== "radio")
+           completedFields++
+       } else {
+         completedFields++
+       }
+     }
+     if (completedFields === totalFields)
+       return true
+     else
+       return false
+   }
+</script>
+<script>
+   $(function() {
+
+     $(document).on('change', ':file', function() {
+       var input = $(this),
+           numFiles = input.get(0).files ? input.get(0).files.length : 1,
+           label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+       input.trigger('fileselect', [numFiles, label]);
+     });
+
+     $(document).ready( function() {
+         $(':file').on('fileselect', function(event, numFiles, label) {
+             var input = $(this).parents('.input-group').find(':text'),
+                 log = numFiles > 1 ? numFiles + ' files selected' : label;
+   
+             if( input.length ) {
+                 input.val(log);
+             } else {
+                 if( log ) {
+                   // alert(log);
+                   // alert("file selected");
+                      var form=$("#upload_form3")[0];
+                       var fd =new FormData(form);
+                        $.ajax({
+                             url: '{{url("profile_pic")}}',
+                             data:fd,
+                             async:false,
+                             type: 'POST',
+                             processData: false,
+                             contentType: false,
+                            success:function(response){
+                            if(response.flag=="true")
+                               {
+                                     window.location ='{{url("login_success")}}';
+                               }
+                               else
+                                {
+                                    window.location ='{{url("login_success")}}';
+                                } 
+                        },
+                      });
+                }
+             }
+   
+         });
+     });
+     
+   });
+</script>
+<script>
+   $("#delivery_address").click(function(e){
+      e.preventDefault();
+         var form=$("#upload_form2")[0];
+         var fd =new FormData(form);
+          $.ajax({
+               url: '{{url("delivery_address")}}',
+               data:fd,
+               async:false,
+               type: 'POST',
+               processData: false,
+               contentType: false,
+              success:function(response){
+              if(response.flag=="false")
+                 {
+                        $("#address_success").html("Address Updated Successfully");
+                 }
+                 else
+                  {
+                       $("#address_success").html('Address Save Successfully');
+                  } 
+          },
+        });
+   
+   });
+
+     $("#change_password").click(function(e){
+      e.preventDefault();
+         var form=$("#upload_form1")[0];
+         var fd =new FormData(form);
+         if($("#old_password").val()=="")
+        {
+          $("#change_password_success").html("Please Enter The Old Password");
+        }else if($("#new_password").val()=="")
+        {
+           $("#change_password_success").html("Please Enter The New Password");
+        }
+        else
+        {
+          $.ajax({
+               url: '{{url("change_password")}}',
+               data:fd,
+               async:false,
+               type: 'POST',
+               processData: false,
+               contentType: false,
+              success:function(response){
+              if(response.flag=="true")
+                 {
+                        $("#change_password_success").html("Password Updated Successfully");
+                 }
+                 else if(response.flag=="false")
+                  {
+                       $("#change_password_success").html("You have entered wrong old password");
+                  } 
+          },
+        });
+       }   
+   
+   });
+</script>
+@stop

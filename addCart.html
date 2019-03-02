@@ -1,0 +1,413 @@
+@extends('admin_views.layout.website_layout')
+@section('content')
+ 
+ <?php error_reporting(0); ?>
+ <div class="container nonpad">
+<section id="wrapper">
+  
+   <aside id="notifications">
+      <div class="container">
+      </div>
+   </aside>
+   <div class="container padd_both">
+      <div class="row">
+         <div id="content-wrapper"><br/><br/><br/>
+            <section id="main">
+               <div class="cart-grid row nonpad">
+                  <!-- Left Block: cart product informations & shpping -->
+                  <div class="cart-grid-body col-xs-12 col-lg-8 nonpad">
+                     <!-- cart products detailed -->
+                     <div class="card cart-container">
+                        <div class="card-block">
+                           <h1 class="h1">My Cart ({{count($cart)}})</h1>
+                        </div>
+                        <hr>
+						
+                        <div class="cart-overview js-cart">
+					   	 <?php $subtotal=0;
+						     $total_qty = 0;
+						 ?>
+                         @foreach($cart as $item)
+                         <?php
+						
+						   $total_qty1 = $item['qty'];
+						   $total_qty += $item['qty'];
+						    $subtotal += $item['price'] * $total_qty1;
+						 ?>
+						<div class="select_item col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+						<div><a href="{{URL::to('removeCart/'.$item['id'])}}">
+                  <i class="fa fa-times-circle cross_icon" aria-hidden="true"></i>
+                </a></div>
+							<div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 nonpad1">
+								<center>
+                           @if(!empty($item['options']['image_name']))
+                           <img src="{{URL::asset('public/uploadimages/'.$item['options']['image_name'])}}"/>
+                           @endif 
+                        </center>
+								<center>
+								  <div class="product-add-to-cart acs">
+                                   <!--<input type="number" class="form-control" value="1">-->
+                  <div class="input-group spinner">
+									<input  class="form-control qty" id="number_{{$item['id']}}" row_id="{{$item['id']}}" type="text" value="{{$item['qty']}}" min="0" max="32">
+									<div class="input-group-btn-vertical butt buttons">
+									   <button class="btn btn-default increment" onclick="increment({{$item['price']}},{{$item['id']}})" type="button"><i class="fa fa-angle-up"></i></button>
+									  <button class="btn btn-default decrement" onclick='decrement({{$item['price']}},{{$item['id']}})' type="button"><i class="fa fa-angle-down"></i></button>
+                                 <!--  <button class="btn btn-default increment" onclick='increment({{$item['price']}},{{$item['id']}})' type="button"><i class="fa fa-angle-up"></i></button>-->
+									</div>
+									</div>
+                    <div class="clearfix"></div>
+                 </div>
+                 <p></p>
+               <!--   @if(!empty($item['qty5']))
+                   <button style="width: 20px;height: 20px;" onClick="qty5({{$item['price']}},{{$item['id']}})"
+                    type="button" value="5">5</button>
+                   @endif
+                   @if(!empty($item['qty10']))
+                   <button style="width: 20px;height: 20px;" onclick="qty10({{$item['price']}},{{$item['id']}})"
+                    type="button" value="10">10</button>
+                   @endif
+                    @if(!empty($item['qty20']))
+                   <button style="width: 20px;height: 20px;" onclick="qty20({{$item['price']}},{{$item['id']}})"
+                    type="button" value="20">20</button>
+                   @endif -->
+								 </center>
+							</div>
+							<div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+								<h1 class="laber-product-title"><a href=""> {{$item['name']}} </a></h1>
+								
+								
+								
+								<div class="top_m">
+							<span style="color: #333;font-size: 21px">	$ </span><span class="rsru" id="sub_{{$item['id']}}">{{$item['price'] * $item['qty']}} </span>
+								   <br />
+								 
+								   ($ <span class="price" id="{{$item['id']}}">{{$item['price']}} </span> each) 
+								
+									<!--<span><strike>$ 0.00</strike></span>
+									<span class="dis">68 % Off</span>-->
+								</div>
+								<div class="top_m  color333">Delivery in 7-8 days</div>
+								<div>10 Days Replacement Policy</div>
+							</div>
+							
+							<div class="clearfix"></div>
+							<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"></div>
+							<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" >
+							     <select class="form-control shipping_profile_id" style="float:right"  id="shipping_profile_id"  onChange="calculateShipping(this.value,{{$item['qty']}})">
+								 <option value="">Select  Shipping</option>
+								 @foreach($item['shipping_data'] as $sd)
+								<?php if($item['qty'] > 1 ){ ?> 
+								    <option value="{{$sd['shipping_profile']['shipping_location']['0']['id']}}"  data-party="{{$sd['shipping_profile']['shipping_location']['0']['each_additional_item']}}" >$ {{$sd['shipping_profile']['shipping_location']['0']['each_additional_item']}} ({{$sd['shipping_profile']['profile_name']}})</option>
+								<?php }else{ ?>
+									 <option  value="{{$sd['shipping_profile']['shipping_location']['0']['id']}}"  data-party="{{$sd['shipping_profile']['shipping_location']['0']['one_item']}}" >{{$sd['shipping_profile']['shipping_location']['0']['one_item']}} ({{$sd['shipping_profile']['profile_name']}})</option>
+									
+								<?php } ?>
+								  @endforeach  
+								 
+								 </select>
+							
+							</div>
+						</div>
+						
+						
+						 @endforeach
+						
+						<div class="add pull-right">
+						<a onclick="showCoupon()" href="javascript:void(0)">Apply shop coupon codes</a> <br />
+						<div id="coupondiv" style="display:none">
+						  <input type="text" style="height:30px" id="couponInput"  /> 
+						  
+						  <button onclick="applyCoupon()" style="height:30px">Apply</button>
+						  <input type="hidden" id="coupon_id" value="0" />
+						</div>
+					  </div>
+						
+						<script>
+						
+						</script>
+							<!--<span class="no-items">There are no more items in your cart</span>-->
+							<div class="clearfix"></div>
+								<div class="add pull-right">
+                                           <a onClick="checkout()" href="javascript:void(0)" ><button type="button"  class="btn btn-primary add-to-cart">  
+                               Place Order
+                            </button></a>
+                                        <div class="clearfix"></div>
+                                       </div>
+									   <div class="clearfix"></div>
+                        </div>
+						
+                     </div>
+                     <a class="label" href="{{URL::to('/')}}">
+                     <i class="material-icons">chevron_left</i>Continue shopping
+                     </a>
+                     <!-- shipping informations -->
+                  </div>
+                  <!-- Right Block: cart subtotal & cart total -->
+                 <div class="cart-grid-right col-xs-12 col-lg-4 nonpad">
+                     <div class="card cart-summary">
+                        <div class="cart-detailed-totals">
+                           <div class="card-block">
+                              <div class="cart-summary-line" id="cart-subtotal-products">
+                                 <span class="label js-subtotal">
+                                 <span id="total_items">{{$total_qty}}</span> items
+                                 </span>
+                                 <span class="value" id="subtotal">$ <span id="cart_total">{{$subtotal}}</span></span>
+                              </div>
+							  <div class="cart-summary-line" id="cart-subtotal-products">
+                                 <span class="label js-subtotal">
+                                Discount 
+                                 </span>
+                                 <span class="value" >$ <span id="discount" ></span></span>
+                              </div>
+                           </div>
+                           <hr>
+						    <div class="card-block">
+							     <div class="cart-summary-line" id="cart-subtotal-products">
+                                 <span class="label js-subtotal">
+                              <b>  Subtotal </b>
+                                 </span>
+                                 <span class="value" >$ <span id="subtotal1"> {{$subtotal}} </span></span>
+                              </div>
+                             <div class="cart-summary-line" id="cart-subtotal-products">
+                                 <span class="label js-subtotal">
+                                Shipping
+                                 </span>
+                                 <span class="value"  >$ <span id="shipping_amount">0.00 </span></span>
+                              </div>
+							</div>
+							 <hr>
+                           <div class="card-block">
+                              <div class="cart-summary-line cart-total">
+                                 <span class="label"><b>Total (tax incl.)</b></span>
+                                 <span class="value"><b>$</b><b id="total">{{$subtotal}}</b></span>
+                              </div>
+                             
+                           </div>
+                           <hr>
+                        </div>
+                        <div class="checkout text-xs-center card-block">
+                              <a onClick="checkout()" href="javascript:void(0)"><button type="button" class="btn btn-primary"
+                               >Checkout</button></a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+           
+           
+         </div>
+      </div>
+   </div>
+</section>
+
+<script>
+function checkout(){  
+
+var sf=[];
+				$(".shipping_profile_id").each(function() {
+					//alert($(this).val())
+					if($(this).val() > 0){
+						
+						sf.push($(this).val());
+				 //  sf += parseFloat($(this).val());
+					}
+				});
+//alert(sf)
+if(sf.length == '0')
+{
+	alert('Please select shipping.')
+}else{
+    var coupon_amount=$("#discount").text();
+    var shipping_amount=$("#shipping_amount").text();
+    var coupon_id=$("#coupon_id").text();
+    var shipping_id=$("#shipping_profile_id").val();
+   
+         $.ajax({
+            url:'{{url("set_shipping")}}',
+            type:'POST',
+            data:{coupon_amount:coupon_amount,shipping_amount:shipping_amount,coupon_id:coupon_id,shipping_id:shipping_id},
+            success: function(response){
+				
+				window.location.href = '{{url("checkout")}}';
+                
+                 }
+            });
+  }
+     // getTotal();
+}
+
+
+
+ function showCoupon()
+						 {
+							 $('#coupondiv').toggle();
+						 }
+						 
+						 function applyCoupon()
+						 {
+							 $coupon_code =$("#couponInput").val();
+							 var order_total =$("#cart_total").text();
+							// alert(order_total)
+							 var total_quantity =$("#total_items").text();
+							 if($coupon_code == '' ){
+								 alert('Please enter a coupon code')
+							 }else{
+							   $.ajax({
+									url:'{{url("apply_coupon_code")}}',
+									type:'GET',
+									 dataType: "json",
+									data:{coupon_code:$coupon_code,order_total:order_total,total_quantity:total_quantity},
+									success: function(response){
+										
+										if(response.res == '0')
+										{
+											alert(response.msg);
+										}else{
+											
+											if(response.coupon_type == 'percentage_off')
+											{
+												
+												var disc_amt  =  (order_total/100 ) * response.coupon_rate;
+												$("#discount").text(disc_amt.toFixed(2));
+												
+											}else if(response.coupon_type == 'amount_off') 
+											{
+												var disc_amt =  response.coupon_rate;
+												$("#discount").text(disc_amt.toFixed(2) );
+											}
+											var sa =$("#shipping_amount").text();
+											var total_amount =(parseFloat(order_total) - parseFloat(disc_amt)).toFixed(2) ;
+											var final_amount =parseFloat(total_amount) + parseFloat(sa);
+											$("#subtotal1").text(total_amount);
+											$("#total").text(final_amount);
+											$("#coupon_id").text(response.id);
+										}
+										
+								 }
+							  });
+							 } 
+						 }
+
+function calculateShipping($id,quantity)
+{
+	//alert($("#shipping_profile_id").find(':selected').data('party'))
+	//$(this).find(':selected').data('party')
+	var shipping_amount =$("#shipping_profile_id").find(':selected').data('party');
+	$("#shipping_amount").text(shipping_amount);
+	if(shipping_amount > 0) {
+	$("#total").text(parseFloat($("#subtotal1").text()) + shipping_amount)
+	}
+	
+}
+function increment($price,$id){  
+
+
+    $qty=$("#number_"+$id).val();
+     $qty1=parseFloat($qty)+1;
+         $.ajax({
+            url:'{{url("edit_product_qty")}}',
+            type:'POST',
+            data:{product_id:$id,quantity:$qty1},
+            success: function(response){
+                if(response.flag == 'true'){
+                    $("#sub_"+$id).text(parseFloat($price * $qty1)); 
+                      getTotal();
+				
+                   }
+                 }
+            });
+      //getTotal();
+}
+function decrement($price,$id){  
+    $qty=$("#number_"+$id).val();
+     $qty1=parseFloat($qty)-1; 
+     $.ajax({
+            url:'{{url("edit_product_qty")}}',
+            type:'POST',
+            data:{product_id:$id,quantity:$qty1},
+            success: function(response){
+                if(response.flag == 'true'){
+                   $("#sub_"+$id).text(parseFloat($price * $qty1)); 
+                      getTotal();
+					  
+					  
+					  
+					  
+                   }
+                 }
+            });
+    getTotal();
+}
+
+function qty5($price,$id){  
+     $qty1=5;
+      $qty=$("#number_"+$id).val($qty1);
+         $.ajax({
+            url:'{{url("edit_product_qty")}}',
+            type:'POST',
+            data:{product_id:$id,quantity:$qty1},
+            success: function(response){
+                if(response.flag == 'true'){
+                    $("#sub_"+$id).text(parseFloat($price * $qty1)); 
+                      getTotal();
+                   }
+                 }
+            });
+      getTotal();
+}
+
+function qty10($price,$id){  
+     $qty1=10;
+      $qty=$("#number_"+$id).val($qty1);
+         $.ajax({
+            url:'{{url("edit_product_qty")}}',
+            type:'POST',
+            data:{product_id:$id,quantity:$qty1},
+            success: function(response){
+                if(response.flag == 'true'){
+                    $("#sub_"+$id).text(parseFloat($price * $qty1)); 
+                      getTotal();
+                   }
+                 }
+            });
+      getTotal();
+}
+function qty20($price,$id){  
+     $qty1=20;
+      $qty=$("#number_"+$id).val($qty1);
+         $.ajax({
+            url:'{{url("edit_product_qty")}}',
+            type:'POST',
+            data:{product_id:$id,quantity:$qty1},
+            success: function(response){
+                if(response.flag == 'true'){
+                   $("#sub_"+$id).text(parseFloat($price * $qty1)); 
+                      getTotal();
+                   }
+                 }
+            });
+      getTotal();
+}
+function getTotal(){
+    var total = 0;
+    $(".rsru").each(function(){
+        total += parseFloat($(this).text());
+    });
+	//alert(total)
+    $("#cart_total").text(parseFloat(total));
+    $("#subtotal1").text(parseFloat(total));
+    $("#total").text(parseFloat(total));
+	
+	
+	   	  var items=0;
+				$(".qty").each(function() {
+				   items += parseFloat($(this).val());
+				});
+				$("#total_items").text(items);
+				}
+   
+
+
+</script>
+@stop
+

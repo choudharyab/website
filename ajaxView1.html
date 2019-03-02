@@ -1,0 +1,71 @@
+      @foreach($product as $key=>$value)
+                   @if(!empty($value['product_image'][0]['image']))
+                              <div class="item-inner col-lg-2 col-md-4 col-sm-4 col-xs-6">
+						   <div class="height306">
+                                 <article class="product-miniature js-product-miniature">
+                                    <div class="laberProduct-container item">
+                                       <div class="row">
+                                         
+                                              <div class="products">
+                                             <div class="product-container width_100 margin_b0">
+                                             <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
+                                                <a href="{{URL::to('view_product/'.$value['id'])}}" class="grid-link">
+                                                   <div class="ImageOverlayCa"></div>
+                                                   <div class="reveal reveal_i"> 
+                                                    <center>  <img src="{{URL::asset('public/uploadimages/'.$value['product_image'][0'image'])}}" class="featured-image images_prodcusts" alt="Maybelle gold"></center> ][
+                                                   </div>
+                                                </a>
+                                                <div class="ImageWrapper">
+                                        
+                                                <div class="product-button">
+                                                @if(!empty($value['sale_quantity'][0]['sale_quantity']) && $value['sale_quantity'][0]['sale_quantity']==$value['quantity'])
+                                                <a class="add-cart-btn" title="Out Of Stock">
+                                                <img src="{{ asset('websiteassets/img/ecommerce.png') }}" class="image_d" title="Out Of Stock"/>                                 
+                                                </a>
+                                                @else
+                                                <a class="add-cart-btn" href="{{URL::to('addCart/'.$value['id'])}}">
+                                                <img src="{{ asset('websiteassets/img/ecommerce.png') }}" class="image_d" title="Add To Cart"/>                                 
+                                                </a>
+                                                @endif
+                                                <a  class="quick-view-text" href="{{URL::to('view_product/'.$value['id'])}}">   
+                                                <img   src="{{ asset('websiteassets/img/eye.png') }}"  class="image_d top_9" title="View"/>                                   
+                                                </a>    
+                                                <!--<a  class="quick-view-text">    
+                                                <img  src="{{ asset('websiteassets/img/link.png') }}"  class="image_d" title="link"/>                                   
+                                                </a>-->                                             
+                                                <a onclick="add_wishlist({{$value['id']}})">                      
+                                                 <img  src="{{ asset('websiteassets/img/wishlist.png') }}"  class="image_d" title="Add To Wishlist"/>
+                                                </a> 
+                                             </div>
+                                                </div>
+												 
+                                             </div>
+											             <div class="col-xs-12 col-sm-8 col-md-9 col-lg-9">
+                                             <div class="laber-product-description padding_top33">
+                                                <h2 class="laber-product-title" itemprop="name"><a href="{{URL::to('view_product/'.$value['id'])}}"> {{$value['product_name']}}</a></h2>
+                                                 <div class="product_price">
+                                             <div class="grid-link__org_price mar_V">
+                                                <span class="money checked">$ {{$value['amount']}}</span>
+                                             </div>
+                                             <div class="font-size12">
+                                                <i class="fa fa-star checked" aria-hidden="true"></i>
+                                                <i class="fa fa-star checked" aria-hidden="true"></i>
+                                                <i class="fa fa-star checked" aria-hidden="true"></i>
+                                                <i class="fa fa-star checked" aria-hidden="true"></i>
+                                                <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                                             </div>
+                                          </div>
+                                                <div class="description_short">
+                                                   <p>{{$value['description']}}</p>
+                                                </div>
+                                               </div>
+                                              </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </article>
+                              </div>
+                              </div>
+                               @endif
+                             @endforeach
